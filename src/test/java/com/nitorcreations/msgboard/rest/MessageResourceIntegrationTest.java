@@ -31,7 +31,7 @@ import com.nitorcreations.msgboard.rest.bean.MessageBeanV2List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MessageResourceIntegrationTest {
-    private static final String BASE_URL = "http://localhost:8080";
+    private static final String BASE_URL = "http://localhost:8080/api/";
     private static Client client;
 
     @BeforeClass
@@ -46,35 +46,35 @@ public class MessageResourceIntegrationTest {
 
     @Test
     public void test() {
-        assertThat(getJsonV1List("messages/list/v1").messages.size(), is(0));
-        assertThat(getJsonV2List("messages/list/v2").messages.size(), is(0));
+        assertThat(getJsonV1List("v1/messages/list").messages.size(), is(0));
+        assertThat(getJsonV2List("v2/messages/list").messages.size(), is(0));
 
         createMessage();
         assertFindById(1);
-        assertThat(getJsonV1List("messages/list/v1").messages.size(), is(1));
-        assertThat(getJsonV2List("messages/list/v2").messages.size(), is(1));
+        assertThat(getJsonV1List("v1/messages/list").messages.size(), is(1));
+        assertThat(getJsonV2List("v2/messages/list").messages.size(), is(1));
     }
 
     @Test
     public void getsListMessagesV2XmlFormat() {
-        Response response = getXmlList("messages/list/v2");
+        Response response = getXmlList("v2/messages/list");
         assertThat(response.getStatus(), is(OK.getStatusCode()));
         assertThat(response.getMediaType().toString(), is("application/xml"));
     }
 
     @Test
     public void createMessageWithInvalidUrl() {
-        Response response = post("messages/create", new MessageBeanV2("title", "content", "sender", "invalidurl"));
+        Response response = post("v2/messages/create", new MessageBeanV2("title", "content", "sender", "invalidurl"));
         assertThat(response.getStatus(), is(BAD_REQUEST.getStatusCode()));
     }
 
     private void createMessage() {
-        Response response = post("messages/create", new MessageBeanV2("title", "content", "sender", "http://test.com"));
+        Response response = post("v2/messages/create", new MessageBeanV2("title", "content", "sender", "http://test.com"));
         assertThat(response.getStatus(), is(CREATED.getStatusCode()));
     }
 
     private void assertFindById(int i) {
-        MessageBeanV2 findById = get("messages/find/" + i);
+        MessageBeanV2 findById = get("v2/messages/find/" + i);
         assertThat(findById.title, is("title"));
         assertThat(findById.content, is("content"));
         assertThat(findById.sender, is("sender"));
@@ -82,22 +82,22 @@ public class MessageResourceIntegrationTest {
     }
 
     private MessageBeanV2List getJsonV2List(String url) {
-        return client.target(BASE_URL).path(url).request(APPLICATION_JSON).accept("application/json").get(MessageBeanV2List.class);
+        return client.target(BASE_URL).path(url).request(APPLICATION_JSON).accept(APPLICATION_JSON).get(MessageBeanV2List.class);
     }
 
     private MessageBeanV1List getJsonV1List(String url) {
-        return client.target(BASE_URL).path(url).request(APPLICATION_JSON).accept("application/json").get(MessageBeanV1List.class);
+        return client.target(BASE_URL).path(url).request(APPLICATION_JSON).accept(APPLICATION_JSON).get(MessageBeanV1List.class);
     }
 
     private Response getXmlList(String url) {
-        return client.target(BASE_URL).path(url).request(APPLICATION_XML).accept("application/xml").get();
+        return client.target(BASE_URL).path(url).request(APPLICATION_XML).accept(APPLICATION_XML).get();
     }
 
     private MessageBeanV2 get(String url) {
-        return client.target(BASE_URL).path(url).request(APPLICATION_JSON).accept("application/json").get(MessageBeanV2.class);
+        return client.target(BASE_URL).path(url).request(APPLICATION_JSON).accept(APPLICATION_JSON).get(MessageBeanV2.class);
     }
 
     private Response post(String url, MessageBeanV2 bean) {
-        return client.target(BASE_URL).path(url).request(APPLICATION_JSON).accept("application/json").post(Entity.entity(bean, "application/json"));
+        return client.target(BASE_URL).path(url).request(APPLICATION_JSON).accept(APPLICATION_JSON).post(Entity.entity(bean, APPLICATION_JSON));
     }
 }
