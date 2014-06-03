@@ -32,6 +32,8 @@ import com.nitorcreations.msgboard.rest.bean.MessageBeanV2List;
 @RunWith(MockitoJUnitRunner.class)
 public class MessageResourceIntegrationTest {
     private static final String BASE_URL = "http://localhost:8080/api/";
+    private static final String VERSION_1 = "application/vnd.msgboard-v1+json";
+    private static final String VERSION_2 = "application/vnd.msgboard-v2+json";
     private static Client client;
 
     @BeforeClass
@@ -46,35 +48,35 @@ public class MessageResourceIntegrationTest {
 
     @Test
     public void test() {
-        assertThat(getJsonV1List("v1/messages/list").messages.size(), is(0));
-        assertThat(getJsonV2List("v2/messages/list").messages.size(), is(0));
+        assertThat(getJsonV1List("messages/list").messages.size(), is(0));
+        assertThat(getJsonV2List("messages/list").messages.size(), is(0));
 
         createMessage();
         assertFindById(1);
-        assertThat(getJsonV1List("v1/messages/list").messages.size(), is(1));
-        assertThat(getJsonV2List("v2/messages/list").messages.size(), is(1));
+        assertThat(getJsonV1List("messages/list").messages.size(), is(1));
+        assertThat(getJsonV2List("messages/list").messages.size(), is(1));
     }
 
     @Test
     public void getsListMessagesV2XmlFormat() {
-        Response response = getXmlList("v2/messages/list");
+        Response response = getXmlList("messages/list");
         assertThat(response.getStatus(), is(OK.getStatusCode()));
         assertThat(response.getMediaType().toString(), is("application/xml"));
     }
 
     @Test
     public void createMessageWithInvalidUrl() {
-        Response response = post("v2/messages/create", new MessageBeanV2("title", "content", "sender", "invalidurl"));
+        Response response = post("messages/create", new MessageBeanV2("title", "content", "sender", "invalidurl"));
         assertThat(response.getStatus(), is(BAD_REQUEST.getStatusCode()));
     }
 
     private void createMessage() {
-        Response response = post("v2/messages/create", new MessageBeanV2("title", "content", "sender", "http://test.com"));
+        Response response = post("messages/create", new MessageBeanV2("title", "content", "sender", "http://test.com"));
         assertThat(response.getStatus(), is(CREATED.getStatusCode()));
     }
 
     private void assertFindById(int i) {
-        MessageBeanV2 findById = get("v2/messages/find/" + i);
+        MessageBeanV2 findById = get("messages/find/" + i);
         assertThat(findById.title, is("title"));
         assertThat(findById.content, is("content"));
         assertThat(findById.sender, is("sender"));
@@ -82,11 +84,11 @@ public class MessageResourceIntegrationTest {
     }
 
     private MessageBeanV2List getJsonV2List(String url) {
-        return client.target(BASE_URL).path(url).request(APPLICATION_JSON).accept(APPLICATION_JSON).get(MessageBeanV2List.class);
+        return client.target(BASE_URL).path(url).request(APPLICATION_JSON).accept(VERSION_2).get(MessageBeanV2List.class);
     }
 
     private MessageBeanV1List getJsonV1List(String url) {
-        return client.target(BASE_URL).path(url).request(APPLICATION_JSON).accept(APPLICATION_JSON).get(MessageBeanV1List.class);
+        return client.target(BASE_URL).path(url).request(APPLICATION_JSON).accept(VERSION_1).get(MessageBeanV1List.class);
     }
 
     private Response getXmlList(String url) {

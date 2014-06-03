@@ -3,7 +3,6 @@ package com.nitorcreations.msgboard.rest;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -23,12 +22,14 @@ import org.springframework.stereotype.Component;
 
 import com.nitorcreations.msgboard.domain.Message;
 import com.nitorcreations.msgboard.domain.MessageRepository;
+import com.nitorcreations.msgboard.rest.bean.MessageBeanV1;
+import com.nitorcreations.msgboard.rest.bean.MessageBeanV1List;
 import com.nitorcreations.msgboard.rest.bean.MessageBeanV2;
 import com.nitorcreations.msgboard.rest.bean.MessageBeanV2List;
 import com.nitorcreations.msgboard.rest.util.MessageConverter;
 import com.nitorcreations.msgboard.rest.util.MessageFunctions;
 
-@Path("v2/messages")
+@Path("messages")
 @Component
 public class MessageResource {
 
@@ -52,11 +53,24 @@ public class MessageResource {
 
     @GET
     @Path("/list")
-    @Produces(value = { APPLICATION_JSON, APPLICATION_XML })
+    @Produces({"application/vnd.msgboard-v2+json", "application/xml"})
     public MessageBeanV2List listMessagesV2() {
         MessageBeanV2List listBean = new MessageBeanV2List();
         listBean.messages = convertToV2(messageRepository.findAll());
         return listBean;
+    }
+
+    @GET
+    @Path("/list")
+    @Produces("application/vnd.msgboard-v1+json")
+    public MessageBeanV1List listMessagesV1() {
+        MessageBeanV1List listBean = new MessageBeanV1List();
+        listBean.messages = convertToV1(messageRepository.findAll());
+        return listBean;
+    }
+
+    private List<MessageBeanV1> convertToV1(Collection<Message> messages) {
+        return newArrayList(transform(messages, MessageFunctions.toV1()));
     }
 
     private List<MessageBeanV2> convertToV2(Collection<Message> messages) {
