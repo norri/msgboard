@@ -1,9 +1,9 @@
 package com.nitorcreations.msgboard.rest;
 
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Lists.newArrayList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
-import static jersey.repackaged.com.google.common.collect.Iterables.transform;
-import static org.hibernate.validator.internal.util.CollectionHelper.newArrayList;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -76,10 +76,5 @@ public class MessageResource {
 
     private List<MessageBeanV2> convertToV2(Collection<Message> messages) {
         return newArrayList(transform(messages, MessageFunctions.toV2()));
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static <T> List<T> cast(List<?> collection) {
-        return (List) collection;
     }
 }

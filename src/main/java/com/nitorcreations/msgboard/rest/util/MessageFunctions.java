@@ -1,7 +1,6 @@
 package com.nitorcreations.msgboard.rest.util;
 
-import jersey.repackaged.com.google.common.base.Function;
-
+import com.google.common.base.Function;
 import com.nitorcreations.msgboard.domain.Message;
 import com.nitorcreations.msgboard.rest.bean.MessageBeanV1;
 import com.nitorcreations.msgboard.rest.bean.MessageBeanV2;
