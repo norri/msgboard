@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -38,6 +39,7 @@ public class MessageResource {
 
     @POST
     @Path("/create")
+    @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
     public Response create(@Valid final MessageBeanV2 bean) throws MalformedURLException {
         long id = messageRepository.save(MessageConverter.fromV2Bean(bean));
