@@ -16,7 +16,7 @@ Design and implementation
 #### Notes
 - Project should be divided to multiple modules when code size increases
 - Database persistence is not implemented but can be easily added
-- REST API versioning was done using HTTP Accept headers to specify which response version is requested and received
+- REST API versioning was done using HTTP Accept headers to specify which response version is requested and received (only done for listing messages)
 - Integration test is only minimal and should be refactored
 - Proper logging and error handling was left out of this scope
 
